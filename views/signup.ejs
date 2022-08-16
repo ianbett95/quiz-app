@@ -1,12 +1,17 @@
 <%-include('partials/header')%>
 
 <main id="signup-form">
-    <form action="">
+    <form action="/signup" method="post">
         <h1>sign up</h1>
-        <input type="text" name="fullName" id="" placeholder="full name">
-        <input type="email" name="email" id="" placeholder="email address">
-        <input type="password" name="password" id="" placeholder="password">
-        <input type="password"name="confirmPassword" id="" placeholder="confirm password">
+         
+        <%if(error){ %>
+            <p class="error"><%=message%></p>
+            <%}%>
+
+        <input type="text" name="fullname" id=""value=<%=user.name%> placeholder="full name" required >
+        <input type="email" name="email" id=""value=<%=user.email%> placeholder="email address" required>
+        <input type="password" name="password" id=""value=<%=user.password%> placeholder="password" required min-length="8">
+        <input type="password"name="confirmPassword" id="" value=<%=user.confirmPassword%>placeholder="confirm password" required min-length="8">
         <input type="submit" value="create account">
         <p>Already have an account? <a href="/login">Sign in</a></p>
     </form>
