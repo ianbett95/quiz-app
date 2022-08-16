@@ -1,0 +1,53 @@
+@font-face {
+    font-family: montserrat-bold;
+    src: url(Montserrat-Bold.ttf);
+}
+@font-face {
+    font-family:montserrat-regular ;
+    src: url(Montserrat-Regular.ttf);
+}
+@font-face {
+    font-family: montserrat-light;
+    src: url(Montserrat-Light.ttf);
+}
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: montserrat-regular;
+}
+
+
+#login-form, #signup-form{
+    height: 100vh;
+    display: grid;
+    place-items: center;
+}
+#login-form form, #signup-form form{
+    background-color: #EAEFF2;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 10px;
+    gap: 10px;
+}
+#login-form h1, #signup-form h1{
+    text-align: center;
+    font-size: 26px;
+}
+
+#login-form input, #signup-form input{
+    font-size: 24px;
+    padding: 10px;
+
+}
+#login-form input[type='submit'], #signup-form input[type='submit']{
+ background-color: #00E0D4;
+ border: #00E0D4;
+ font-family: montserrat-bold;
+}
+
+#login-form a, #signup-form a{
+    text-decoration: none;
+    font-family: montserrat-bold;
+}
