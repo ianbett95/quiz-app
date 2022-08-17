@@ -8,10 +8,10 @@
             <p class="error"><%=message%></p>
             <%}%>
 
-        <input type="text" name="fullname" id=""value=<%=user.name%> placeholder="full name" required >
-        <input type="email" name="email" id=""value=<%=user.email%> placeholder="email address" required>
-        <input type="password" name="password" id=""value=<%=user.password%> placeholder="password" required min-length="8">
-        <input type="password"name="confirmPassword" id="" value=<%=user.confirmPassword%>placeholder="confirm password" required min-length="8">
+        <input type="text" name="fullname" id=""value="<%=user.name%>" placeholder="full name"  required >
+        <input type="email" name="email" id=""value="<%=user.email%>" placeholder="email address" required>
+        <input type="password" name="password" id=""value="<%=user.password%>" placeholder="password" required min-length="8">
+        <input type="password"name="confirmPassword" id="" value="<%=user.confirmPassword%>" placeholder="confirm password" required min-length="8">
         <input type="submit" value="create account">
         <p>Already have an account? <a href="/login">Sign in</a></p>
     </form>
