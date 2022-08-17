@@ -1,10 +1,14 @@
 <%-include('partials/header')%>
 
 <main id="login-form">
- <form action="">
+ <form action="/login" method="post">
     <h1>login</h1>
-    <input type="email" name="email" id="" placeholder="email address">
-    <input type="password" name="password" id="" placeholder="password">
+   <%if(error){%>
+      <p class="error"><%=message%></p>
+   <%}%>
+
+    <input type="email" name="email" id="" value="<%=user.email%>" placeholder="email address" required>
+    <input type="password" name="password" id="" value="<%=user.password%>" placeholder="password" required minlength="8">
     <input type="submit" value="log in">
     <p>Do not have an account? <a href="/signup">create one</a></p>
  </form>
