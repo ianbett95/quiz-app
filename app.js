@@ -1,6 +1,7 @@
 import express from "express";
 import session from 'express-session'
 import bcrypt from "bcrypt";
+import multer from "multer"
 import mysql from "mysql"
 
 const app = express();
@@ -11,6 +12,9 @@ const connection = mysql.createConnection({
   password:'',
   database:'users'
 })
+const uploads = multer({dest:'public/uploads'})
+
+
 
 app.set("view engine", "ejs");
 
@@ -106,6 +110,52 @@ app.get('/dashboard',(req,res)=>{
     res.redirect('/login')
   }
 })
+app.get('/profile',(req,res)=>{
+  if (res.locals.isLoggedIn) {
+    let sql='SELECT * FROM student WHERE s_id=?'
+    connection.query(
+      sql,[req.session.userID],(error,results)=>{
+        res.render('profile',{profile:results[0]})
+      }
+    )
+  } else {
+    res.redirect('/login')
+  }
+});
+
+//edit profile
+app.get('/edit-profile',(req,res)=>{
+  if (res.locals.isLoggedIn) {
+    let sql= 'SELECT * FROM student WHERE s_id =?'
+    connection.query(
+      sql,[req.session.userID],(error,results)=>{
+      res.render('edit-profile',{profile:results[0]})
+    })
+
+
+  } else {
+    res.redirect('/login')
+  }
+})
+
+app.post('/edit-profile/:id', uploads.single('picture'), (req,res)=>{
+  let sql ='UPDATE student SET email = ?,name=?, gender=?, dob= ?,picture=?,contacts =? WHERE s_id=?'
+  connection.query(
+    sql,
+    [
+      req.body.email,
+      req.body.name,
+      req.body.gender,
+      req.body.dob,
+      req.file.filename,
+      req.body.contacts,
+      parseInt(req.params.id)
+    ],
+    (error,results)=>{
+      res.redirect('/profile')
+    }
+  )
+})
 
 //display login page
 app.get("/login", (req, res) => {
@@ -149,7 +199,7 @@ app.post("/login", (req, res) => {
    }
   )
   //logout functionality
-  app.get('/logout/',(req,res)=>{
+  app.get('/logout',(req,res)=>{
     //kill session
     req.session.destroy(()=>{
       res.redirect('/')
