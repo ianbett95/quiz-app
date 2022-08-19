@@ -1,4 +1,5 @@
 import express from "express";
+import session from 'express-session'
 import bcrypt from "bcrypt";
 import mysql from "mysql"
 
@@ -15,6 +16,25 @@ app.set("view engine", "ejs");
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
+//prepare to use session
+app.use(session({
+  secret:'majibu',
+  saveUninitialized:false,
+  resave:true
+}))
+//continually check if user is logged in
+app.use((req,res,next)=>{
+  if (req.session.userID===undefined) {
+    res.locals.isLoggedIn=false
+    res.locals.username = 'Guest'
+  } else {
+    res.locals.isLoggedIn=true
+    res.locals.username=req.session.username
+  }
+  next()
+
+  
+})
 
 //display signup page
 
@@ -78,6 +98,14 @@ app.post("/signup", (req, res) => {
 app.get("/", (req, res) => {
   res.render("index");
 });
+//dashboard
+app.get('/dashboard',(req,res)=>{
+  if (res.locals.isLoggedIn) {
+    res.render('dashboard')
+  } else {
+    res.redirect('/login')
+  }
+})
 
 //display login page
 app.get("/login", (req, res) => {
@@ -105,7 +133,9 @@ app.post("/login", (req, res) => {
         results[0].password,
         (error, passwordMatches) => {
           if (passwordMatches) {
-            res.send("grant access");
+            req.session.userID =results[0].s_id
+            req.session.username=results[0].name.split(' ')[0]
+            res.redirect("/dashboard");
           } else {
             let message = "Incorrect password";
             res.render("login", { error: true, message: message, user: user });
@@ -118,7 +148,13 @@ app.post("/login", (req, res) => {
     }
    }
   )
-  // validation
+  //logout functionality
+  app.get('/logout/',(req,res)=>{
+    //kill session
+    req.session.destroy(()=>{
+      res.redirect('/')
+    })
+  })
   
 });
 
