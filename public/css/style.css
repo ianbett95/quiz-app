@@ -16,12 +16,37 @@
     box-sizing: border-box;
     font-family: montserrat-regular;
 }
+.container{
+    padding-left:150px;
+    padding-right: 150px;
+}
 .error{
     background-color:#ff0000;
     color: #fff;
     text-align: center;
     padding: 5px;
     border-radius: 5px;
+}
+header{
+    background-color: #EAEFF2;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a{
+    text-decoration: none;
+    color: #00E0D4;
+}
+nav li{
+    display: inline;
+    padding: 10px;
+    font-size:21px;
+}
+
+nav li:hover{
+ border-bottom: 2px solid #00E0D4;
 }
 
 #login-form, #signup-form{
