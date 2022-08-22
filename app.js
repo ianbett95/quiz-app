@@ -5,14 +5,14 @@ import multer from "multer"
 import mysql from "mysql"
 
 const app = express();
- 
+
 const connection = mysql.createConnection({
-  host:'localhost',
-  user:'root',
-  password:'',
-  database:'users'
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'quiz_app'
 })
-const uploads = multer({dest:'public/uploads'})
+const uploads = multer({ dest: 'public/uploads' })
 
 
 
@@ -22,22 +22,22 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 //prepare to use session
 app.use(session({
-  secret:'majibu',
-  saveUninitialized:false,
-  resave:true
+  secret: 'majibu',
+  saveUninitialized: false,
+  resave: true
 }))
 //continually check if user is logged in
-app.use((req,res,next)=>{
-  if (req.session.userID===undefined) {
-    res.locals.isLoggedIn=false
+app.use((req, res, next) => {
+  if (req.session.userID === undefined) {
+    res.locals.isLoggedIn = false
     res.locals.username = 'Guest'
   } else {
-    res.locals.isLoggedIn=true
-    res.locals.username=req.session.username
+    res.locals.isLoggedIn = true
+    res.locals.username = req.session.username
   }
   next()
 
-  
+
 })
 
 //display signup page
@@ -62,16 +62,16 @@ app.post("/signup", (req, res) => {
   };
   if (user.password === user.confirmPassword) {
     //check if user exists
-     
-    let sql = 'SELECT * FROM student WHERE email = ?'
+
+    let sql = 'SELECT * FROM students WHERE email = ?'
     connection.query(
-      sql,[user.email],(error,results)=>{
-        if(results.length>0){
-           let message = "account already exists with the email provided";
-           res.render("signup", { error: true, message: message, user: user });
-        }else{
-          bcrypt.hash(user.password,10,(error,hash)=>{
-            let sql = 'INSERT INTO student(email,name,password) VALUES(?,?,?)'
+      sql, [user.email], (error, results) => {
+        if (results.length > 0) {
+          let message = "account already exists with the email provided";
+          res.render("signup", { error: true, message: message, user: user });
+        } else {
+          bcrypt.hash(user.password, 10, (error, hash) => {
+            let sql = 'INSERT INTO students(email,name,password) VALUES(?,?,?)'
             connection.query(
               sql,
               [
@@ -79,23 +79,23 @@ app.post("/signup", (req, res) => {
                 user.name,
                 hash
               ],
-              (error,results)=>{
+              (error, results) => {
                 res.send('account successfully created')
               }
-              
+
             )
           })
         }
       }
     )
-  
 
-    
-    } else {
-       let message = "password/confirm password mismatch";
-       res.render("signup", { error: true, message: message, user: user});
-    }  
-    
+
+
+  } else {
+    let message = "password/confirm password mismatch";
+    res.render("signup", { error: true, message: message, user: user });
+  }
+
 });
 
 //landing page
@@ -103,19 +103,19 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 //dashboard
-app.get('/dashboard',(req,res)=>{
+app.get('/dashboard', (req, res) => {
   if (res.locals.isLoggedIn) {
     res.render('dashboard')
   } else {
     res.redirect('/login')
   }
 })
-app.get('/profile',(req,res)=>{
+app.get('/profile', (req, res) => {
   if (res.locals.isLoggedIn) {
-    let sql='SELECT * FROM student WHERE s_id=?'
+    let sql = 'SELECT * FROM students WHERE s_id=?'
     connection.query(
-      sql,[req.session.userID],(error,results)=>{
-        res.render('profile',{profile:results[0]})
+      sql, [req.session.userID], (error, results) => {
+        res.render('profile', { profile: results[0] })
       }
     )
   } else {
@@ -124,13 +124,13 @@ app.get('/profile',(req,res)=>{
 });
 
 //edit profile
-app.get('/edit-profile',(req,res)=>{
+app.get('/edit-profile', (req, res) => {
   if (res.locals.isLoggedIn) {
-    let sql= 'SELECT * FROM student WHERE s_id =?'
+    let sql = 'SELECT * FROM students WHERE s_id =?'
     connection.query(
-      sql,[req.session.userID],(error,results)=>{
-      res.render('edit-profile',{profile:results[0]})
-    })
+      sql, [req.session.userID], (error, results) => {
+        res.render('edit-profile', { profile: results[0] })
+      })
 
 
   } else {
@@ -138,23 +138,43 @@ app.get('/edit-profile',(req,res)=>{
   }
 })
 
-app.post('/edit-profile/:id', uploads.single('picture'), (req,res)=>{
-  let sql ='UPDATE student SET email = ?,name=?, gender=?, dob= ?,picture=?,contacts =? WHERE s_id=?'
-  connection.query(
-    sql,
-    [
-      req.body.email,
-      req.body.name,
-      req.body.gender,
-      req.body.dob,
-      req.file.filename,
-      req.body.contacts,
-      parseInt(req.params.id)
-    ],
-    (error,results)=>{
-      res.redirect('/profile')
-    }
-  )
+app.post('/edit-profile/:id', uploads.single('picture'), (req, res) => {
+  if (req.file) {
+    let sql = 'UPDATE students SET email = ?,name=?, gender=?, dob= ?,picture=?,contacts =? WHERE s_id=?'
+    connection.query(
+      sql,
+      [
+        req.body.email,
+        req.body.name,
+        req.body.gender,
+        req.body.dob,
+        req.file.filename,
+        req.body.contacts,
+        parseInt(req.params.id)
+      ],
+      (error, results) => {
+        res.redirect('/profile')
+      }
+    )
+    // )
+  } else {
+    let sql = 'UPDATE students SET email = ?,name=?, gender=?, dob= ?,contacts =? WHERE s_id=?'
+    connection.query(
+      sql,
+      [
+        req.body.email,
+        req.body.name,
+        req.body.gender,
+        req.body.dob,
+        req.body.contacts,
+        parseInt(req.params.id)
+      ],
+      (error, results) => {
+        res.redirect('/profile')
+      }
+    )
+  }
+
 })
 
 //display login page
@@ -173,43 +193,43 @@ app.post("/login", (req, res) => {
     password: req.body.password,
   };
 
-  let sql='SELECT* FROM student WHERE email=?'
+  let sql = 'SELECT* FROM students WHERE email=?'
   connection.query(
-   sql,[user.email], 
-   (error,results) => {
-    if (results.length>0) {
-      bcrypt.compare(
-        user.password,
-        results[0].password,
-        (error, passwordMatches) => {
-          if (passwordMatches) {
-            req.session.userID =results[0].s_id
-            req.session.username=results[0].name.split(' ')[0]
-            res.redirect("/dashboard");
-          } else {
-            let message = "Incorrect password";
-            res.render("login", { error: true, message: message, user: user });
+    sql, [user.email],
+    (error, results) => {
+      if (results.length > 0) {
+        bcrypt.compare(
+          user.password,
+          results[0].password,
+          (error, passwordMatches) => {
+            if (passwordMatches) {
+              req.session.userID = results[0].s_id
+              req.session.username = results[0].name.split(' ')[0]
+              res.redirect("/dashboard");
+            } else {
+              let message = "Incorrect password";
+              res.render("login", { error: true, message: message, user: user });
+            }
           }
-        }
-      );
-    } else {
-      let message = "account does not exist please create one";
-      res.render("login", { error: true, message: message, user: user });
+        );
+      } else {
+        let message = "account does not exist please create one";
+        res.render("login", { error: true, message: message, user: user });
+      }
     }
-   }
   )
   //logout functionality
-  app.get('/logout',(req,res)=>{
+  app.get('/logout', (req, res) => {
     //kill session
-    req.session.destroy(()=>{
+    req.session.destroy(() => {
       res.redirect('/')
     })
   })
-  
+
 });
 
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log(`app is running on PORT ${PORT} ...`);
+  console.log(`app is live on PORT ${PORT} ...`);
 });

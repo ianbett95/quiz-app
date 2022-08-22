@@ -82,3 +82,46 @@ nav li:hover{
     text-decoration: none;
     font-family: montserrat-bold;
 }
+#profile{
+text-align: center;
+}
+#profile img {
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+    margin-top: 40px;
+}
+#profile a{
+    text-decoration: none;
+    background-color: #008000;
+    color: #fff;
+    letter-spacing: 3px;
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+#edit-profile form{
+    margin-top: 15px;
+}
+#edit-profile .form-input  {
+  display: flex;
+  margin-bottom: 10px;
+}
+#edit-profile .form-input * {
+    font-size: 20px ;
+}
+#edit-profile .form-input label{
+    width: 30%;
+}
+#edit-profile input[type='submit']{
+    text-decoration: none;
+    background-color: #008000;
+    color: #fff;
+    letter-spacing: 3px;
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #008000;    
+}
