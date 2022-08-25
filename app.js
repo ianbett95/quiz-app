@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'quiz_app'
+  database: 'users'
 })
 const uploads = multer({ dest: 'public/uploads' })
 
@@ -110,6 +110,11 @@ app.get('/dashboard', (req, res) => {
     res.redirect('/login')
   }
 })
+//questions
+app.get('/quiz',(req,res)=>{
+  res.render('quiz')
+})
+//profile
 app.get('/profile', (req, res) => {
   if (res.locals.isLoggedIn) {
     let sql = 'SELECT * FROM students WHERE s_id=?'
