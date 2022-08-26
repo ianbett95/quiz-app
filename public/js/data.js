@@ -105,4 +105,5 @@ const questions =[
         answer:'true'
     }
 ]
-export default questions 
+export default questions
+
