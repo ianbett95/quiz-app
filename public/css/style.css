@@ -144,3 +144,14 @@ text-align: center;
 #questions .choice:hover{
     background-color: #cac9cb;
 }
+#questions input[type='submit']{
+    background-color: #00E0D4;
+    border: #00E0D4;
+    font-family: montserrat-bold;
+    letter-spacing: 2px;
+    padding: 10px;
+    color: #fff;
+    font-size: 25px;
+    margin:20px 0;
+
+}
