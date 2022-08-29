@@ -110,29 +110,53 @@ app.get('/dashboard', (req, res) => {
     res.redirect('/login')
   }
 })
+app.get('/results',(req,res)=>{
+  let sql= 'SELECT * FROM score WHERE S_id_fk=?'
+  connection.query(
+    sql,
+    [req.session.userID],
+    (error,results)=>{
+      res.render('results',{results:results[0]})
+    }
+  )
+})
 //questions
-app.get('/quiz',(req,res)=>{
-  res.render('quiz')
+app.get('/quiz', (req, res) => {
+  if (res.locals.isLoggedIn) {
+    res.render('quiz')
+  } else {
+    res.redirect('/login')
+  }
 })
 
-app.post('/quiz',(req,res)=>{
-  const choices =[]
+app.post('/quiz', (req, res) => {
+  const choices = []
   const answers = req.body.markingScheme.split(',')
-  for(let i=1;i<=10;i++){
-    let choice={
-      id:1,
-      yourAnswer:req.body[`q${i}`],
-      correctAnswer:answers[i-1],
-      score:0
+  for (let i = 1; i <= 10; i++) {
+    let choice = {
+      id: 1,
+      yourAnswer: req.body[`q${i}`],
+      correctAnswer: answers[i - 1],
+      score: 0
     }
-     //choices.push(req.body[`q${i}`])
-     if (choice.yourAnswer===choice.correctAnswer) {
-     choice.score=1
-     }
+    //choices.push(req.body[`q${i}`])
+    if (choice.yourAnswer === choice.correctAnswer) {
+      choice.score = 1
+    }
     choices.push(choice)
   }
-  console.log(choices)
-  console.log(`you scored ${choices.map(choice=>choice.score).reduce((a,b)=>a+b)}`)
+  let sql = 'INSERT INTO score(s_id_fk, response,results) VALUES (?,JSON_ARRAY(?),?)'
+  connection.query(
+    sql,
+    [
+      req.session.userID,
+      [...choices.map(choice => choice.yourAnswer)],
+      choices.map(choice => choice.score).reduce((a, b) => a + b)
+    ],
+    (error, results) => {
+      res.redirect('/results')
+    }
+  )
 })
 //profile
 app.get('/profile', (req, res) => {
