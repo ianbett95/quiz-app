@@ -155,3 +155,15 @@ text-align: center;
     margin:20px 0;
 
 }
+#dashboard div{
+    height: 200px;
+    width: 200px;
+    background-color: #e7e9eb;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+}
+#dashboard a{
+    text-decoration: none;
+    color: #05445E;
+}
