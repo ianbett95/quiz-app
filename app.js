@@ -63,7 +63,7 @@ app.post("/signup", (req, res) => {
   if (user.password === user.confirmPassword) {
     //check if user exists
 
-    let sql = 'SELECT * FROM students WHERE email = ?'
+    let sql = 'SELECT * FROM student WHERE email = ?'
     connection.query(
       sql, [user.email], (error, results) => {
         if (results.length > 0) {
@@ -71,7 +71,7 @@ app.post("/signup", (req, res) => {
           res.render("signup", { error: true, message: message, user: user });
         } else {
           bcrypt.hash(user.password, 10, (error, hash) => {
-            let sql = 'INSERT INTO students(email,name,password) VALUES(?,?,?)'
+            let sql = 'INSERT INTO student(email,name,password) VALUES(?,?,?)'
             connection.query(
               sql,
               [
@@ -110,13 +110,20 @@ app.get('/dashboard', (req, res) => {
     res.redirect('/login')
   }
 })
+//results
 app.get('/results',(req,res)=>{
-  let sql= 'SELECT * FROM score WHERE S_id_fk=?'
+  let sql= 'SELECT * FROM score WHERE s_id_fk=?'
   connection.query(
     sql,
     [req.session.userID],
     (error,results)=>{
-      res.render('results',{results:results[0]})
+      let result=results[0]
+      connection.query(
+        'SELECT * FROM question',
+        (error,results)=>{
+ res.render("results", { results: result,questions:results});
+        }
+      )
     }
   )
 })
@@ -145,7 +152,7 @@ app.post('/quiz', (req, res) => {
     }
     choices.push(choice)
   }
-  let sql = 'INSERT INTO score(s_id_fk, response,results) VALUES (?,JSON_ARRAY(?),?)'
+  let sql = 'INSERT INTO score (s_id_fk, response,results) VALUES (?,JSON_ARRAY(?),?)'
   connection.query(
     sql,
     [
@@ -155,13 +162,17 @@ app.post('/quiz', (req, res) => {
     ],
     (error, results) => {
       res.redirect('/results')
+      console.log(choices)
+      console.log(
+        choices.map((choice) => choice.score).reduce((a, b) => a + b)
+      );
     }
   )
 })
 //profile
 app.get('/profile', (req, res) => {
   if (res.locals.isLoggedIn) {
-    let sql = 'SELECT * FROM students WHERE s_id=?'
+    let sql = 'SELECT * FROM student WHERE s_id=?'
     connection.query(
       sql, [req.session.userID], (error, results) => {
         res.render('profile', { profile: results[0] })
@@ -175,7 +186,7 @@ app.get('/profile', (req, res) => {
 //edit profile
 app.get('/edit-profile', (req, res) => {
   if (res.locals.isLoggedIn) {
-    let sql = 'SELECT * FROM students WHERE s_id =?'
+    let sql = 'SELECT * FROM student WHERE s_id =?'
     connection.query(
       sql, [req.session.userID], (error, results) => {
         res.render('edit-profile', { profile: results[0] })
@@ -189,7 +200,7 @@ app.get('/edit-profile', (req, res) => {
 
 app.post('/edit-profile/:id', uploads.single('picture'), (req, res) => {
   if (req.file) {
-    let sql = 'UPDATE students SET email = ?,name=?, gender=?, dob= ?,picture=?,contacts =? WHERE s_id=?'
+    let sql = 'UPDATE student SET email = ?,name=?, gender=?, dob= ?,picture=?,contacts =? WHERE s_id=?'
     connection.query(
       sql,
       [
@@ -207,7 +218,7 @@ app.post('/edit-profile/:id', uploads.single('picture'), (req, res) => {
     )
     // )
   } else {
-    let sql = 'UPDATE students SET email = ?,name=?, gender=?, dob= ?,contacts =? WHERE s_id=?'
+    let sql = 'UPDATE student SET email = ?,name=?, gender=?, dob= ?,contacts =? WHERE s_id=?'
     connection.query(
       sql,
       [
@@ -242,7 +253,7 @@ app.post("/login", (req, res) => {
     password: req.body.password,
   };
 
-  let sql = 'SELECT* FROM students WHERE email=?'
+  let sql = 'SELECT* FROM student WHERE email=?'
   connection.query(
     sql, [user.email],
     (error, results) => {
