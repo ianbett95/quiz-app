@@ -110,6 +110,16 @@ app.get('/dashboard', (req, res) => {
     res.redirect('/login')
   }
 })
+//admin-panel
+app.get('/admin',(req,res)=>{
+   let sql='SELECT s_id,name,gender,picture,results FROM student JOIN score ON s_id=s_id_fk'
+  connection.query(
+    sql,(error,results)=>{
+      res.render('admin-panel',{students:results})
+      console.log(results)
+    }
+  )
+})
 //results
 app.get('/results',(req,res)=>{
   if (res.locals.isLoggedIn) {
