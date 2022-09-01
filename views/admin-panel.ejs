@@ -1,0 +1,21 @@
+<%-include('partials/header')%> <%-include('partials/nav')%>
+
+<main id="admin-panel" class="container">
+  <%students.forEach(student=>{%>
+  <div class="student">
+    <div><img src="/uploads/<%=student.picture%>" alt="" class="pic" /></div>
+    <p><%=`S-ID 120002${student.s_id}`%></p>
+    <p class="name"><%=student.name%></p>
+    <p><%=student.gender%></p>
+    <p class="results"><%=`${student.results*10}%`%></p>
+
+    <% if(student.results>=5){%>
+  <div><p class="pass">PASS</p></div>
+    <%}else{%>
+  <div><p class="fail">FAIL</p></div>
+    <%}%>
+  </div>
+  <%})%>
+</main>
+
+<%-include('partials/footer')%>
