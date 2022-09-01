@@ -167,3 +167,11 @@ text-align: center;
     text-decoration: none;
     color: #05445E;
 }
+#results .correct-answer{
+    color: #008000;
+    font-family: montserrat-bold;
+}
+#results .wrong-answer{
+    color: #ff0000;
+    font-family: montserrat-bold;
+}
