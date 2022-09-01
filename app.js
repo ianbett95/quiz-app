@@ -80,7 +80,7 @@ app.post("/signup", (req, res) => {
                 hash
               ],
               (error, results) => {
-                res.send('account successfully created')
+                res.redirect('/login')
               }
 
             )
@@ -112,25 +112,41 @@ app.get('/dashboard', (req, res) => {
 })
 //results
 app.get('/results',(req,res)=>{
-  let sql= 'SELECT * FROM score WHERE s_id_fk=?'
-  connection.query(
-    sql,
-    [req.session.userID],
-    (error,results)=>{
-      let result=results[0]
-      connection.query(
-        'SELECT * FROM question',
-        (error,results)=>{
- res.render("results", { results: result,questions:results});
-        }
-      )
-    }
-  )
+  if (res.locals.isLoggedIn) {
+    let sql= 'SELECT * FROM score WHERE s_id_fk=?'
+    connection.query(
+      sql,
+      [req.session.userID],
+      (error,results)=>{
+        let result=results[0]
+        connection.query(
+          'SELECT * FROM question',
+          (error,results)=>{
+   res.render("results", { results: result,questions:results});
+          }
+        )
+      }
+    )
+  } else {
+    res.redirect('/login')
+  }
+
 })
 //questions
 app.get('/quiz', (req, res) => {
   if (res.locals.isLoggedIn) {
-    res.render('quiz')
+    //check if done quiz already
+    let sql='SELECT*FROM score WHERE s_id_fk=?'
+    connection.query(
+      sql,[req.session.userID],
+      (error,results)=>{
+        if (results.length >0) {
+          res.redirect('/results')
+        } else {
+          res.render('quiz')
+        }
+      }
+    )
   } else {
     res.redirect('/login')
   }
