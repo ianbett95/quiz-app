@@ -1,0 +1,18 @@
+<%-include('partials/header')%>
+
+<main id="login-form">
+ <form action="/admin/login" method="post">
+    <h1>login as teacher</h1>
+   <%if(error){%>
+      <p class="error"><%=message%></p>
+   <%}%>
+
+    <input type="email" name="adminEmail" id="" value="<%=admin.email%>" placeholder="email address" required>
+    <input type="password" name="adminPassword" id="" value="<%=admin.password%>" placeholder="password" required minlength="8">
+    <input type="submit" value="log in">
+    <a href="/login" id="login-admin">Login as student</a>
+ </form>
+
+</main>
+
+<%-include('partials/footer')%>
